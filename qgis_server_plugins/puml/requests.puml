@@ -1,0 +1,33 @@
+@startuml
+
+node "QGIS\nWeb Client" as qwc
+node "QGIS Desktop" as qd
+
+interface "FI text/plain" as itxt
+interface "FI QWC" as iqwc
+interface "Capa allnodes" as acapa
+interface "Capabilities" as ncapa
+
+node "QGIS Server" as qs {
+  component "Ingress" as ig
+  component "Kern" as core
+  package "Plugin(s)" as pi {
+    component "Access-Management" as am
+    component "QWC-Featureinfo" as fi
+  }
+  ig -- pi
+  pi -- core
+}
+
+ncapa -- ig
+acapa -- ig
+iqwc -- ig
+itxt -- ig
+
+qwc -- acapa : B
+qwc -- iqwc : A
+
+qd -- ncapa : D
+qd -- itxt : C
+
+@enduml
