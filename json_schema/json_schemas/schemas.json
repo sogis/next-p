@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas_schema.json",
+  "title": "AFU KbS Schemas Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemas"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to the schema definition file"
+    },
+    "schemas": {
+      "type": "array",
+      "description": "List of schema configuration entries",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ident",
+          "name",
+          "db",
+          "models"
+        ],
+        "properties": {
+          "ident": {
+            "type": "string",
+            "description": "Logical identifier of the configuration"
+          },
+          "name": {
+            "type": "string",
+            "description": "Versioned name of the configuration"
+          },
+          "db": {
+            "type": "string",
+            "description": "Database type",
+            "enum": [
+              "pub",
+              "edit"
+            ]
+          },
+          "models": {
+            "type": "array",
+            "description": "List of model identifiers",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "_removal_until": {
+            "type": "string",
+            "description": "Removal date (ISO 8601 format)",
+            "format": "date"
+          },
+          "_internal_remarks": {
+            "type": "string",
+            "description": "Internal remarks"
+          }
+        }
+      }
+    }
+  }
+}
