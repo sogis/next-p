@@ -83,14 +83,20 @@ Before starting a new task, close out the previous branch by merging, squashing,
 Agents should apply the following logic before starting a new task:
 
 * If the current branch contains completed work for a single task and is ready to integrate, **squash-merge it first**.
-* If the current branch contains unfinished or unrelated work, **do not reuse it**. Create a new branch from the appropriate base branch instead.
-* If there is any doubt about whether the current branch is safe to merge, treat it as not ready and start a new branch.
-* After a squash merge, return to the main branch, update it, and create a new task branch.
+* If the current branch contains unfinished or unrelated work, **do not reuse it**.
+* If there is any doubt about whether the current branch is safe to merge, **ask the user** whether to squash-merge it before proceeding.
+* Never leave a previous branch unaddressed without asking the user what should happen to it.
+* After a squash merge, return to the main branch, update it, and create a new task branch from `main`.
 
 ### Recommended Principle
 
 **Always begin a new task from a clean state.**
 That usually means the previous task branch has been squash-merged and a fresh branch has been created for the next piece of work.
+
+## New Task Signal
+
+The user will prompt `nt: ...` whenever starting a new task.
+Treat that as the explicit signal to close out the previous task context and create a dedicated new branch from `main` before making changes.
 
 For your question: yes, that “intelligent logic” makes sense, but it should be framed as a **rule-based decision process**, not as fully automatic behavior unless your tooling explicitly supports safe auto-merge checks. The safe version is: *before starting a new task, check whether the current branch represents a completed single task; if yes, squash-merge it, then create a new branch.*
 
