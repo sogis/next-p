@@ -1,2 +1,5 @@
 sqlmesh/.venv/
 sqlmesh/.codex
+sqlmesh/.cache/
+sqlmesh/logs/
+sqlmesh/db.db

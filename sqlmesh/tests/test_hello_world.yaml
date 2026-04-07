@@ -1,0 +1,7 @@
+test_hello_world:
+  model: '"hello_world"'
+  inputs: {}
+  outputs:
+    query:
+    - id: 1
+      greeting: hello world
