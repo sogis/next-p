@@ -13,8 +13,12 @@ Fragestellungen:
 ## Hello World
 
 This repo now contains a minimal DuckDB-backed SQLMesh model in `models/hello_world.sql`.
-You can verify it locally with:
+You can run it locally from the command line with:
 
 ```bash
+# Install dependencies once
+.venv/bin/pip install -r requirements.txt
+
+# Run the model for a single day
 .venv/bin/sqlmesh evaluate hello_world --start 2026-04-06 --end 2026-04-06
 ```
