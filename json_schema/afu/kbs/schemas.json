@@ -1,0 +1,40 @@
+{
+    "$schema": "../../json_schemas/schemas.json",
+    "schemas": [
+        {
+            "ident": "afu_kbs_shared",
+            "name": "afu_kbs_shared_v3",
+            "db": "pub",
+            "models": [
+                "SO_AFU_KbS_Shared_20260803"
+            ]
+        },
+        {
+            "ident": "afu_kbs_private",
+            "name": "afu_kbs_private_v1",
+            "db": "pub",
+            "models": [
+                "SO_AFU_KbS_Private_20260309"
+            ]
+        },
+        {
+            "ident": "afu_kbs_edit",
+            "name": "afu_kbs_edit_v2",
+            "db": "edit",
+            "models": [
+                "SO_AFU_KbS_Edit_20210607",
+                "SO_AFU_KbS_Private_20260309"
+            ]
+        },
+        {
+            "ident": "afu_kbs_edit",
+            "name": "afu_kbs_edit_v1",
+            "db": "edit",
+            "models": [
+                "SO_AFU_KbS_Edit_20210607"
+            ],
+            "_removal_until": "2026-06-04",
+            "_internal_remarks": "bar"
+        }
+    ]
+}

@@ -1,0 +1,38 @@
+{
+    "$schema": "../../json_schemas/tables.json",
+    "tables": [
+        {
+            "ident": "standort",
+            "table": "standort",
+            "schema_ref": "afu_kfs_shared",
+            "wms_columns": [
+                {
+                    "name": "id",
+                    "alias": "Kennung"
+                },
+                {
+                    "name": "dokumente",
+                    "alias": "Dokumente",
+                    "_json_columns": [
+                        {
+                            "name": "dokument",
+                            "alias": "Titel"
+                        },
+                        {
+                            "name": "url",
+                            "alias": "Link (URL)"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "ident": "verdachtsflaeche",
+            "table": "verdachtsflaeche",
+            "schema_ref": "afu_kfs_priv",
+            "wms_columns": {
+                "jinja_filepath": "verdachtsflaeche.jinja"
+            }
+        }
+    ]
+}

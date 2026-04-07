@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://geo.so.ch/netl/tables.json",
+  "title": "Title",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "tables"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to the schema definition file"
+    },
+    "tables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "ident",
+          "table",
+          "schema_ref"
+        ],
+        "properties": {
+          "ident": {
+            "type": "string"
+          },
+          "table": {
+            "type": "string"
+          },
+          "schema_ref": {
+            "type": "string"
+          },
+          "_wms_columns": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/column"
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "jinja_filepath"
+                ],
+                "properties": {
+                  "jinja_filepath": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "column": {
+      "type": "object",
+      "required": [
+        "name",
+        "alias"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "_json_columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/json_column"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "json_column": {
+      "type": "object",
+      "required": [
+        "name",
+        "alias"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
