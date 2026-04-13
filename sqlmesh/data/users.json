@@ -1,0 +1,17 @@
+[
+    {
+        "id": "bjsvwjek",
+        "groups_": [
+            "agi"
+        ],
+        "roles_": [
+            "afu_kbs_read","gesa_tiger_read"
+        ]
+    },
+    {
+        "id": "vumastu",
+        "groups_": [
+            "afu","afu_boden"
+        ]
+    }
+]
