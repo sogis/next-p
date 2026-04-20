@@ -5,7 +5,7 @@ Fragestellungen:
 * Koennen isolierte Unit-Tests geschrieben werden, mit welche Cornercases fuer eine komplizierte SQL-Query abgedeckt werden?
   * Ist das "einfach genug", so dass sich der Aufwand lohnt?
   * Wird damit sqlmesh als produktive Abhaengigkeit eingefuehrt, oder kann dies vermieden werden?
-    * Kann Verhindert werden mittels Befehl render und Ablage des generierten Sql in eine Datei.
+    * Kann Verhindert werden mittels Befehl "render" und Ablage des generierten Sql in eine Datei.
 * Wie weit kann ein AI-Agent wie codex bei der Erstellung helfen?
   * Erstellung der Sql-Queries?
   * Erstellung des Konfigurations-Geruests fuer sqlmesh?

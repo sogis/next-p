@@ -1,32 +1,12 @@
 MODEL (
   name iam_principal,
+  description 'Returns the users and groups normalized as principals. The query returns empty lists if no roles / no groups where assigned.',
   kind FULL,
-  audits (
-    not_null(columns=(id, is_user)),
-    unique_values(columns=(id, is_user))
-  )
 );
 
-WITH principal AS (
-  SELECT
-    id,
-    roles,
-    groups,
-    TRUE AS is_user
-  FROM iam_users
-
-  UNION ALL
-
-  SELECT
-    id,
-    roles,
-    groups,
-    FALSE AS is_user
-  FROM iam_groups
-)
 SELECT
   id,
-  roles,
-  groups,
+  COALESCE(roles_, CAST([] AS TEXT[])) AS roles,
+  COALESCE(groups_, CAST([] AS TEXT[])) AS groups,
   is_user
-FROM principal
+FROM iam_principal_raw

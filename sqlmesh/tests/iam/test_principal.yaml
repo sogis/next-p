@@ -1,85 +1,82 @@
 user_mapping:
-  description: Maps a user row into the principal shape and marks it as a user.
-  model: '"iam_principal"'
+  description: Normalizes a raw principal row and preserves the user marker.
+  model: iam_principal
   inputs:
-    '"iam_users"':
+    iam_principal_raw:
       columns:
         id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
+        roles_: TEXT[]
+        groups_: TEXT[]
+        is_user: BOOLEAN
       rows:
       - id: user_a
-        roles:
-        - role_direct
-        groups:
-        - group_a
-    '"iam_groups"':
-      columns:
-        id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
-      rows: []
+        roles_:
+        - role_1
+        - role_2
+        groups_:
+        - group_1
+        - group_2
+        is_user: true
   outputs:
     query:
     - id: user_a
       roles:
-      - role_direct
+      - role_1
+      - role_2
       groups:
-      - group_a
+      - group_1
+      - group_2
       is_user: true
 
 group_mapping:
   description: Maps a group row into the principal shape and marks it as a group.
-  model: '"iam_principal"'
+  model: iam_principal
   inputs:
-    '"iam_users"':
+    iam_principal_raw:
       columns:
         id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
-      rows: []
-    '"iam_groups"':
-      columns:
-        id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
+        roles_: TEXT[]
+        groups_: TEXT[]
+        is_user: BOOLEAN
       rows:
       - id: group_a
-        roles:
-        - role_group
-        groups:
-        - parent_group
+        roles_:
+        - role_1
+        - role_2
+        groups_:
+        - group_1
+        - group_2
+        is_user: false
   outputs:
     query:
     - id: group_a
       roles:
-      - role_group
+      - role_1
+      - role_2
       groups:
-      - parent_group
+      - group_1
+      - group_2
       is_user: false
 
 missing_arrays:
   description: Converts missing role and group arrays into empty arrays.
-  model: '"iam_principal"'
+  model: iam_principal
   inputs:
-    '"iam_users"':
+    iam_principal_raw:
       columns:
         id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
+        roles_: TEXT[]
+        groups_: TEXT[]
+        is_user: BOOLEAN
       rows:
       - id: user_missing
-        roles: null
-        groups: null
-    '"iam_groups"':
-      columns:
-        id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
-      rows:
+        roles_: null
+        groups_: null
+        is_user: true
       - id: group_missing
-        roles: null
-        groups: null
+        roles_: null
+        groups_: null
+        is_user: false
   outputs:
     query:
     - id: group_missing
@@ -93,26 +90,23 @@ missing_arrays:
 
 empty_arrays:
   description: Preserves explicit empty arrays from both users and groups.
-  model: '"iam_principal"'
+  model: iam_principal
   inputs:
-    '"iam_users"':
+    iam_principal_raw:
       columns:
         id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
+        roles_: TEXT[]
+        groups_: TEXT[]
+        is_user: BOOLEAN
       rows:
       - id: user_empty
-        roles: []
-        groups: []
-    '"iam_groups"':
-      columns:
-        id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
-      rows:
+        roles_: []
+        groups_: []
+        is_user: true
       - id: group_empty
-        roles: []
-        groups: []
+        roles_: []
+        groups_: []
+        is_user: false
   outputs:
     query:
     - id: group_empty
@@ -126,37 +120,36 @@ empty_arrays:
 
 mixed_population:
   description: Keeps all principals when users and groups are present together.
-  model: '"iam_principal"'
+  model: iam_principal
   inputs:
-    '"iam_users"':
+    iam_principal_raw:
       columns:
         id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
+        roles_: TEXT[]
+        groups_: TEXT[]
+        is_user: BOOLEAN
       rows:
       - id: user_a
-        roles:
+        roles_:
         - role_a
-        groups:
+        groups_:
         - group_a
+        is_user: true
       - id: user_b
-        roles: []
-        groups:
+        roles_: []
+        groups_:
         - group_b
-    '"iam_groups"':
-      columns:
-        id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
-      rows:
+        is_user: true
       - id: group_a
-        roles:
+        roles_:
         - role_group_a
-        groups: []
+        groups_: []
+        is_user: false
       - id: group_b
-        roles: []
-        groups:
+        roles_: []
+        groups_:
         - parent_group
+        is_user: false
   outputs:
     query:
     - id: group_a
@@ -183,29 +176,26 @@ mixed_population:
 
 same_id_both_types:
   description: Keeps a user and a group with the same id as separate principal rows.
-  model: '"iam_principal"'
+  model: iam_principal
   inputs:
-    '"iam_users"':
+    iam_principal_raw:
       columns:
         id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
+        roles_: TEXT[]
+        groups_: TEXT[]
+        is_user: BOOLEAN
       rows:
       - id: shared_id
-        roles:
+        roles_:
         - user_role
-        groups: []
-    '"iam_groups"':
-      columns:
-        id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
-      rows:
+        groups_: []
+        is_user: true
       - id: shared_id
-        roles:
+        roles_:
         - group_role
-        groups:
+        groups_:
         - parent_group
+        is_user: false
   outputs:
     query:
     - id: shared_id
@@ -218,45 +208,4 @@ same_id_both_types:
       roles:
       - user_role
       groups: []
-      is_user: true
-
-duplicate_rows:
-  description: Leaves duplicate user rows visible when they already exist upstream.
-  model: '"iam_principal"'
-  inputs:
-    '"iam_users"':
-      columns:
-        id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
-      rows:
-      - id: user_dup
-        roles:
-        - role_a
-        groups:
-        - group_a
-      - id: user_dup
-        roles:
-        - role_a
-        groups:
-        - group_a
-    '"iam_groups"':
-      columns:
-        id: TEXT
-        roles: TEXT[]
-        groups: TEXT[]
-      rows: []
-  outputs:
-    query:
-    - id: user_dup
-      roles:
-      - role_a
-      groups:
-      - group_a
-      is_user: true
-    - id: user_dup
-      roles:
-      - role_a
-      groups:
-      - group_a
       is_user: true

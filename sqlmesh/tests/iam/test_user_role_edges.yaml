@@ -1,0 +1,296 @@
+direct_user_role:
+  description: Returns a user's direct role when the user has no group memberships.
+  model: '"iam_user_role_edges"'
+  inputs:
+    '"iam_principal"':
+      columns:
+        id: TEXT
+        roles: TEXT[]
+        groups: TEXT[]
+        is_user: BOOLEAN
+      rows:
+      - id: user_direct
+        roles:
+        - direct_role
+        groups: []
+        is_user: true
+  outputs:
+    query:
+    - user_id: user_direct
+      role_id: direct_role
+      cycle_overflow: false
+      group_chain: []
+
+# direct_group_role:
+#   description: Inherits a role from a directly assigned group.
+#   model: '"iam_user_role_edges"'
+#   inputs:
+#     '"iam_principal"':
+#       columns:
+#         id: TEXT
+#         roles: TEXT[]
+#         groups: TEXT[]
+#         is_user: BOOLEAN
+#       rows:
+#       - id: user_direct_group
+#         roles: []
+#         groups:
+#         - team_a
+#         is_user: true
+#       - id: team_a
+#         roles:
+#         - group_role
+#         groups: []
+#         is_user: false
+#   outputs:
+#     query:
+#     - user_id: user_direct_group
+#       role_id: group_role
+#       cycle_overflow: false
+#       group_chain:
+#       - team_a
+
+# indirect_group_role:
+#   description: Inherits roles through child, parent, and grandparent group links.
+#   model: '"iam_user_role_edges"'
+#   inputs:
+#     '"iam_principal"':
+#       columns:
+#         id: TEXT
+#         roles: TEXT[]
+#         groups: TEXT[]
+#         is_user: BOOLEAN
+#       rows:
+#       - id: user_nested
+#         roles: []
+#         groups:
+#         - child_group
+#         is_user: true
+#       - id: child_group
+#         roles:
+#         - child_role
+#         groups:
+#         - parent_group
+#         is_user: false
+#       - id: parent_group
+#         roles:
+#         - parent_role
+#         groups:
+#         - root_group
+#         is_user: false
+#       - id: root_group
+#         roles:
+#         - root_role
+#         groups: []
+#         is_user: false
+#   outputs:
+#     query:
+#     - user_id: user_nested
+#       role_id: child_role
+#       cycle_overflow: false
+#       group_chain:
+#       - child_group
+#     - user_id: user_nested
+#       role_id: parent_role
+#       cycle_overflow: false
+#       group_chain:
+#       - child_group
+#       - parent_group
+#     - user_id: user_nested
+#       role_id: root_role
+#       cycle_overflow: false
+#       group_chain:
+#       - child_group
+#       - parent_group
+#       - root_group
+
+# mixed_sources:
+#   description: Combines direct user roles with all reachable group roles.
+#   model: '"iam_user_role_edges"'
+#   inputs:
+#     '"iam_principal"':
+#       columns:
+#         id: TEXT
+#         roles: TEXT[]
+#         groups: TEXT[]
+#         is_user: BOOLEAN
+#       rows:
+#       - id: user_mixed
+#         roles:
+#         - direct_role
+#         groups:
+#         - child_group
+#         is_user: true
+#       - id: child_group
+#         roles:
+#         - child_role
+#         groups:
+#         - parent_group
+#         is_user: false
+#       - id: parent_group
+#         roles:
+#         - parent_role
+#         groups: []
+#         is_user: false
+#   outputs:
+#     query:
+#     - user_id: user_mixed
+#       role_id: child_role
+#       cycle_overflow: false
+#       group_chain:
+#       - child_group
+#     - user_id: user_mixed
+#       role_id: direct_role
+#       cycle_overflow: false
+#       group_chain: []
+#     - user_id: user_mixed
+#       role_id: parent_role
+#       cycle_overflow: false
+#       group_chain:
+#       - child_group
+#       - parent_group
+
+# dedup_same_role:
+#   description: Keeps separate edges when the same role is granted through different principals.
+#   model: '"iam_user_role_edges"'
+#   inputs:
+#     '"iam_principal"':
+#       columns:
+#         id: TEXT
+#         roles: TEXT[]
+#         groups: TEXT[]
+#         is_user: BOOLEAN
+#       rows:
+#       - id: user_dedup
+#         roles:
+#         - shared_role
+#         groups:
+#         - group_a
+#         - group_b
+#         is_user: true
+#       - id: group_a
+#         roles:
+#         - shared_role
+#         groups: []
+#         is_user: false
+#       - id: group_b
+#         roles:
+#         - shared_role
+#         groups: []
+#         is_user: false
+#   outputs:
+#     query:
+#     - user_id: user_dedup
+#       role_id: shared_role
+#       cycle_overflow: false
+#       group_chain: []
+#     - user_id: user_dedup
+#       role_id: shared_role
+#       cycle_overflow: false
+#       group_chain:
+#       - group_a
+#     - user_id: user_dedup
+#       role_id: shared_role
+#       cycle_overflow: false
+#       group_chain:
+#       - group_b
+
+# no_roles_no_rows:
+#   description: Produces no output rows when neither the user nor reachable groups have roles.
+#   model: '"iam_user_role_edges"'
+#   inputs:
+#     '"iam_principal"':
+#       columns:
+#         id: TEXT
+#         roles: TEXT[]
+#         groups: TEXT[]
+#         is_user: BOOLEAN
+#       rows:
+#       - id: user_empty
+#         roles: []
+#         groups:
+#         - empty_group
+#         is_user: true
+#       - id: empty_group
+#         roles: []
+#         groups: []
+#         is_user: false
+#   outputs:
+#     query: []
+
+# multiple_groups_union:
+#   description: Unions roles from multiple directly assigned groups.
+#   model: '"iam_user_role_edges"'
+#   inputs:
+#     '"iam_principal"':
+#       columns:
+#         id: TEXT
+#         roles: TEXT[]
+#         groups: TEXT[]
+#         is_user: BOOLEAN
+#       rows:
+#       - id: user_multi
+#         roles: []
+#         groups:
+#         - team_a
+#         - team_b
+#         is_user: true
+#       - id: team_a
+#         roles:
+#         - role_a
+#         groups: []
+#         is_user: false
+#       - id: team_b
+#         roles:
+#         - role_b
+#         groups: []
+#         is_user: false
+#   outputs:
+#     query:
+#     - user_id: user_multi
+#       role_id: role_a
+#       cycle_overflow: false
+#       group_chain:
+#       - team_a
+#     - user_id: user_multi
+#       role_id: role_b
+#       cycle_overflow: false
+#       group_chain:
+#       - team_b
+
+# circular_groups:
+#   description: Exposes repeated traversal edges and flags overflow once the chain exceeds ten groups.
+#   model: '"iam_user_role_edges"'
+#   inputs:
+#     '"iam_principal"':
+#       columns:
+#         id: TEXT
+#         roles: TEXT[]
+#         groups: TEXT[]
+#         is_user: BOOLEAN
+#       rows:
+#       - id: user_cycle
+#         roles: []
+#         groups:
+#         - group_a
+#         is_user: true
+#       - id: group_a
+#         roles:
+#         - role_a
+#         groups:
+#         - group_b
+#         is_user: false
+#       - id: group_b
+#         roles: []
+#         groups:
+#         - group_a
+#         is_user: false
+#   outputs:
+#     query:
+#       query: |
+#         SELECT -1
+#         WHERE NOT EXISTS (
+#           SELECT cycle_overflow
+#           FROM user_role_edges
+#           WHERE cycle_overflow = true
+#         )
