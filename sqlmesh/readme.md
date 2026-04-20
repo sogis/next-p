@@ -23,3 +23,12 @@ You can run it locally from the command line with:
 # Run the model for a single day
 .venv/bin/sqlmesh evaluate hello_world --start 2026-04-06 --end 2026-04-06
 ```
+
+## SQLMesh `@ASSERT` macro
+
+This repo provides a project macro in [macros/assert.py](/home/oliver/code/next-p/sqlmesh/macros/assert.py)
+that expands `@ASSERT(condition, message)` into DuckDB SQL using `error(message)`.
+
+```sql
+SELECT @ASSERT(count(*) > 0, 'Expected at least one row') FROM some_table;
+```

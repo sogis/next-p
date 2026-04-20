@@ -1,8 +1,8 @@
 direct_user_role:
   description: Returns a user's direct role when the user has no group memberships.
-  model: '"iam_user_role_edges"'
+  model: iam_user_role_edges
   inputs:
-    '"iam_principal"':
+    iam_principal:
       columns:
         id: TEXT
         roles: TEXT[]

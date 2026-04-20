@@ -1,0 +1,7 @@
+assert_true:
+  description: Evaluates the SQLMesh @ASSERT macro inside a model query.
+  model: test_assert_pass
+  outputs:
+    query:
+    - id: 1
+      assertion_result: null
