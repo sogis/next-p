@@ -1,5 +1,5 @@
 MODEL (
-  name test_assert_pass,
+  name assert_pass,
   description 'Helper model. Used only to verify the assert macro via test_assert_pass.yaml',
   kind FULL,
 );

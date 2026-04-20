@@ -40,3 +40,13 @@ linter:
     - ambiguousorinvalidcolumn
     - invalidselectstarexpansion
     - noambiguousprojections
+
+before_all:
+  - |
+    CREATE SCHEMA IF NOT EXISTS util;
+
+    CREATE OR REPLACE MACRO util.assert(ok, fail_message) AS
+      CASE
+        WHEN ok THEN TRUE
+        ELSE error(fail_message)
+      END;

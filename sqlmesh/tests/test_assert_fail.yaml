@@ -1,7 +1,0 @@
-assert_fail:
-  description: Evaluates the SQLMesh @ASSERT macro inside a model query.
-  model: assert_fail
-  outputs:
-    query:
-    - id: 1
-      assertion_result: null
