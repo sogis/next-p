@@ -1,5 +1,5 @@
 MODEL (
-  name iam.user_role,
+  name iam.user_roles,
   kind FULL,
 );
 

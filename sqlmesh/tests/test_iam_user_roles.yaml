@@ -1,6 +1,6 @@
 ordered_roles_are_stable_and_deduplicated:
   description: Aggregates a user's reachable roles into a sorted array. The same role granted along multiple paths appears only once.
-  model: iam.user_role
+  model: iam.user_roles
   inputs:
     iam.user_role_edges:
       columns:
@@ -29,7 +29,7 @@ ordered_roles_are_stable_and_deduplicated:
 
 cycle_case_aggregates_without_duplicate_roles:
   description: Cyclic group membership can generate repeated traversal edges. The aggregate model should still return a single ordered role list for the user.
-  model: iam.user_role
+  model: iam.user_roles
   inputs:
     iam.user_role_edges:
       columns:
@@ -51,7 +51,7 @@ cycle_case_aggregates_without_duplicate_roles:
 
 multiple_users_are_grouped_independently:
   description: Each user should produce its own aggregate row. Shared upstream groups must not merge role lists across users.
-  model: iam.user_role
+  model: iam.user_roles
   inputs:
     iam.user_role_edges:
       columns:

@@ -1,5 +1,6 @@
 MODEL (
   name iam.user_role_edges,
+  description 'Returns each "resolution path" from a user to a role. Direct or via 1-n group memberships. One row per path.',
   kind FULL,
 );
 

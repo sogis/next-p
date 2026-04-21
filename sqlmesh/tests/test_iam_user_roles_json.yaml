@@ -1,0 +1,23 @@
+roles_are_wrapped_in_json_object_without_changing_rows:
+  description: Preserves one row per user and replaces the roles array with a JSON object containing the same ordered roles.
+  model: iam.user_roles_json
+  inputs:
+    iam.user_roles:
+      columns:
+        user_id: TEXT
+        roles: TEXT[]
+      rows:
+      - user_id: user_alpha
+        roles:
+        - a_role
+        - shared_role
+      - user_id: user_beta
+        roles:
+        - beta_role
+  outputs:
+    partial: true
+    query:
+    - user_id: user_alpha
+      roles_json: '{"roles":["a_role","shared_role"]}'
+    - user_id: user_beta
+      roles_json: '{"roles":["beta_role"]}'

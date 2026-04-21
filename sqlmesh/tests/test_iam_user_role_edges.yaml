@@ -1,4 +1,4 @@
-direct_user_role:
+user_roles:
   description: Returns a user's direct role when the user has no group memberships.
   model: iam.user_role_edges
   inputs:
