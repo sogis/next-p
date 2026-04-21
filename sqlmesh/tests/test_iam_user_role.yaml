@@ -1,0 +1,76 @@
+ordered_roles_are_stable_and_deduplicated:
+  description: Aggregates a user's reachable roles into a sorted array. The same role granted along multiple paths appears only once.
+  model: iam.user_role
+  inputs:
+    iam.user_role_edges:
+      columns:
+        user_id: TEXT
+        role_id: TEXT
+      rows:
+      - user_id: user_ordered
+        role_id: z_role
+      - user_id: user_ordered
+        role_id: shared_role
+      - user_id: user_ordered
+        role_id: a_role
+      - user_id: user_ordered
+        role_id: shared_role
+      - user_id: user_ordered
+        role_id: m_role
+  outputs:
+    partial: true
+    query:
+    - user_id: user_ordered
+      roles:
+      - a_role
+      - m_role
+      - shared_role
+      - z_role
+
+cycle_case_aggregates_without_duplicate_roles:
+  description: Cyclic group membership can generate repeated traversal edges. The aggregate model should still return a single ordered role list for the user.
+  model: iam.user_role
+  inputs:
+    iam.user_role_edges:
+      columns:
+        user_id: TEXT
+        role_id: TEXT
+      rows:
+      - user_id: user_cycle
+        role_id: role_a
+      - user_id: user_cycle
+        role_id: role_a
+      - user_id: user_cycle
+        role_id: role_a
+  outputs:
+    partial: true
+    query:
+    - user_id: user_cycle
+      roles:
+      - role_a
+
+multiple_users_are_grouped_independently:
+  description: Each user should produce its own aggregate row. Shared upstream groups must not merge role lists across users.
+  model: iam.user_role
+  inputs:
+    iam.user_role_edges:
+      columns:
+        user_id: TEXT
+        role_id: TEXT
+      rows:
+      - user_id: user_alpha
+        role_id: shared_role
+      - user_id: user_beta
+        role_id: beta_role
+      - user_id: user_beta
+        role_id: shared_role
+  outputs:
+    partial: true
+    query:
+    - user_id: user_alpha
+      roles:
+      - shared_role
+    - user_id: user_beta
+      roles:
+      - beta_role
+      - shared_role

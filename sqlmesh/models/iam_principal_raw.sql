@@ -1,5 +1,5 @@
 MODEL (
-  name iam_principal_raw,
+  name iam.principal_raw,
   description 'Returns the users and groups normalized as principals.',
   kind FULL,
 );
