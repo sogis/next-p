@@ -1,0 +1,7 @@
+buildDir = '/netl_build'
+
+
+tasks.register('copy', Copy) {
+    from "$projectDir/build.gradle"
+    into buildDir
+}
