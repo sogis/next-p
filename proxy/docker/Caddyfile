@@ -1,0 +1,63 @@
+http://localhost:8080 {
+    encode zstd gzip
+
+    header {
+        Content-Type application/json
+        Access-Control-Allow-Origin *
+        Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization"
+    }
+
+    @getUsers {
+        method GET
+        path /api/users
+    }
+
+    handle @getUsers {
+        respond `[
+            {"id":1,"name":"Alice"},
+            {"id":2,"name":"Bob"}
+        ]` 200
+    }
+
+    @getFirst {
+        method GET
+        path /api/users/1
+    }
+
+    handle @getFirst {
+        respond `{"id":1,"name":"Alice","email":"alice@example.test"}` 200
+    }
+
+    @createUser {
+        method POST
+        path /api/users
+    } 
+
+    handle @createUser {
+        respond `{"id":3,"name":"New User","created":true}` 201
+    }
+
+    @updateUser {
+        method PUT
+        path /api/users/1
+    } 
+
+    handle @updateUser {
+        respond `{"id":1,"name":"Alice Updated","updated":true}` 200
+    }
+
+    @deleteUser {
+        method DELETE
+        path /api/users/1
+    } 
+
+    handle @deleteUser {
+        respond `{"deleted":true}` 200
+    }
+
+    # Not found
+    handle {
+        respond `{"error":"not_found"}` 404
+    }
+}

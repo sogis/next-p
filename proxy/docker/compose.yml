@@ -1,0 +1,21 @@
+services:
+  apisix:
+    image: apache/apisix:3.16.0-debian
+    ports:
+      - "8088:9080"
+      - "9180:9180"
+    volumes:
+      - ./apisix_config/apisix.yaml:/usr/local/apisix/conf/apisix.yaml
+      - ./apisix_config/config.yaml:/usr/local/apisix/conf/config.yaml
+    depends_on:
+      - caddy
+
+  caddy:
+    image: caddy:2
+    container_name: caddy
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile

@@ -1,0 +1,9 @@
+# apisix.yaml
+routes:
+  - id: 1
+    uri: /*
+    upstream:
+      type: roundrobin
+      nodes:
+        "caddy:8080": 1
+#END
