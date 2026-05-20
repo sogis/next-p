@@ -1,0 +1,2 @@
+p, reader, /kbs*, GET
+p, writer, /kbs*, *

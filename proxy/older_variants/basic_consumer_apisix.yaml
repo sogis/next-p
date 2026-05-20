@@ -1,0 +1,55 @@
+# Implements permissions based on read / write routes and basic auth
+routes:
+  - id: users-read
+    uris: 
+      - /api/users
+      - /api/users/*
+    methods:
+      - GET
+    plugins:
+      basic-auth: {}
+      consumer-restriction:
+        whitelist:
+          - reader
+          - writer
+    upstream:
+      type: roundrobin
+      nodes:
+        "caddy:8080": 1
+  - id: users-write
+    uris: 
+      - /api/users
+      - /api/users/*
+    methods:
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+    plugins:
+      basic-auth: {}
+      consumer-restriction:
+        whitelist:
+          - writer
+    upstream:
+      type: roundrobin
+      nodes:
+        "caddy:8080": 1
+
+consumers:
+  - username: reader
+    plugins:
+      basic-auth:
+        username: reader-key
+        password: reader-key
+  - username: writer
+    plugins:
+      basic-auth:
+        username: writer-key
+        password: writer-key
+  - username: other
+    plugins:
+      basic-auth:
+        username: other-key
+        password: other-key
+        
+#END

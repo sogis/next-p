@@ -1,0 +1,52 @@
+# Implements permissions based on read / write routes and api key
+routes:
+  - id: users-read
+    uris: 
+      - /api/users
+      - /api/users/*
+    methods:
+      - GET
+    plugins:
+      key-auth: {}
+      consumer-restriction:
+        whitelist:
+          - reader
+          - writer
+    upstream:
+      type: roundrobin
+      nodes:
+        "caddy:8080": 1
+  - id: users-write
+    uris: 
+      - /api/users
+      - /api/users/*
+    methods:
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+    plugins:
+      key-auth: {}
+      consumer-restriction:
+        whitelist:
+          - writer
+    upstream:
+      type: roundrobin
+      nodes:
+        "caddy:8080": 1
+
+consumers:
+  - username: reader
+    plugins:
+      key-auth:
+        key: reader-key
+  - username: writer
+    plugins:
+      key-auth:
+        key: writer-key
+  - username: other
+    plugins:
+      key-auth:
+        key: other-key
+        
+#END

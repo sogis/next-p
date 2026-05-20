@@ -1,9 +1,19 @@
-# apisix.yaml
+# Implements permissions based on casbin and basic auth
 routes:
-  - id: 1
-    uri: /*
+  - id: users
+    uris: 
+      - /
+      - /*
+    plugins:
+      openid-connect:
+        client_id: apisix
+        client_secret: secret
+        discovery: http://authz_srv:8080/default/.well-known/openid-configuration
+        bearer_only: true
+        use_jwks: true
+        ssl_verify: false
     upstream:
       type: roundrobin
       nodes:
-        "caddy:8080": 1
+        "upstream:80": 1        
 #END

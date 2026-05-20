@@ -1,21 +1,32 @@
 services:
   apisix:
     image: apache/apisix:3.16.0-debian
+    container_name: apisix
     ports:
-      - "8088:9080"
+      - "9080:9080"
       - "9180:9180"
     volumes:
       - ./apisix_config/apisix.yaml:/usr/local/apisix/conf/apisix.yaml
       - ./apisix_config/config.yaml:/usr/local/apisix/conf/config.yaml
+      - ./casbin/:/usr/local/apisix/casbin/
     depends_on:
-      - caddy
+      - upstream
 
-  caddy:
-    image: caddy:2
-    container_name: caddy
+  upstream:
+    image: traefik/whoami:v1.11
+    container_name: upstream
 
+  authz_srv:
+    image: ghcr.io/navikt/mock-oauth2-server:latest
+    container_name: authz_srv
     ports:
-      - "8080:8080"
+      - 8080:8080
 
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+  client:
+    image: registry.gitlab.com/gitlab-ci-utils/curl-jq:4.0.3
+    container_name: client
+    entrypoint: ["sleep", "20h"]
+
+
+
+  

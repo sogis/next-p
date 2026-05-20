@@ -1,0 +1,40 @@
+# Implements permissions based on casbin and basic auth
+routes:
+  - id: users
+    uris: 
+      - /
+      - /*
+    plugins:
+      basic-auth:
+        _meta:
+          priority: 3000
+            
+      authz-casbin:
+        _meta:
+          priority: 1000
+        model_path: casbin/acl_model.conf
+        policy_path: casbin/acl_perm.csv
+        username: X-Consumer-Username
+    upstream:
+      type: roundrobin
+      nodes:
+        "echo:80": 1
+
+consumers:
+  - username: reader
+    plugins:
+      basic-auth:
+        username: reader
+        password: reader
+  - username: writer
+    plugins:
+      basic-auth:
+        username: writer
+        password: writer
+  - username: other
+    plugins:
+      basic-auth:
+        username: other
+        password: other
+        
+#END
