@@ -1,7 +1,6 @@
-# Implements permissions based on casbin and basic auth
 routes:
   - id: users
-    uris: 
+    uris:
       - /
       - /*
     plugins:
@@ -12,8 +11,31 @@ routes:
         bearer_only: true
         use_jwks: true
         ssl_verify: false
+
+      serverless-pre-function:
+        phase: access
+        functions:
+        - |
+          return function(conf, ctx)
+            local core = require("apisix.core")
+            local cjson = require("cjson.safe")
+
+            local userinfo = core.request.header(ctx, "X-Userinfo")
+            local claims = userinfo and cjson.decode(ngx.decode_base64(userinfo))
+
+            if claims and claims.sub then
+              core.request.set_header(ctx, "X-Userinfo-Sub", claims.sub)
+            end
+          end
+          
+      authz-casbin:
+        model_path: casbin/acl_model.conf
+        policy_path: casbin/acl_perm.csv
+        username: X-Userinfo-Sub
+
     upstream:
       type: roundrobin
       nodes:
-        "upstream:80": 1        
+        "upstream:80": 1
+
 #END

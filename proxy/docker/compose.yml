@@ -16,9 +16,9 @@ services:
     image: traefik/whoami:v1.11
     container_name: upstream
 
-  authz_srv:
+  authn_srv:
     image: ghcr.io/navikt/mock-oauth2-server:latest
-    container_name: authz_srv
+    container_name: authn_srv
     ports:
       - 8080:8080
 
