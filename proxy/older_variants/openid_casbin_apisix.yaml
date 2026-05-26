@@ -1,0 +1,30 @@
+# Implements permissions based on openid and casbin. Does not work due to a model mismatch:
+# openid-connect can only provide the hashed userinfo, but the authz-casbin needs the user name
+routes:
+  - id: users
+    uris: 
+      - /
+      - /*
+    plugins:
+      openid-connect:
+        client_id: apisix
+        client_secret: secret
+        discovery: http://authz_srv:8080/default/.well-known/openid-configuration
+        bearer_only: true
+        use_jwks: true
+        ssl_verify: false
+        set_userinfo_header: true
+        _meta:
+          priority: 3000
+            
+      authz-casbin:
+        _meta:
+          priority: 1000
+        model_path: casbin/acl_model.conf
+        policy_path: casbin/acl_perm.csv
+        username: X-Userinfo
+    upstream:
+      type: roundrobin
+      nodes:
+        "upstream:80": 1        
+#END

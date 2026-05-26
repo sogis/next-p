@@ -7,13 +7,15 @@ routes:
       openid-connect:
         client_id: apisix
         client_secret: secret
-        discovery: http://authz_srv:8080/default/.well-known/openid-configuration
+        discovery: http://authn_srv:8080/default/.well-known/openid-configuration
         bearer_only: true
         use_jwks: true
         ssl_verify: false
+        _meta:
+          priority: 2599
 
-      serverless-pre-function:
-        phase: access
+      serverless-post-function:
+        phase: rewrite
         functions:
         - |
           return function(conf, ctx)
@@ -27,11 +29,15 @@ routes:
               core.request.set_header(ctx, "X-Userinfo-Sub", claims.sub)
             end
           end
+        _meta:
+          priority: 2580
           
       authz-casbin:
         model_path: casbin/acl_model.conf
         policy_path: casbin/acl_perm.csv
         username: X-Userinfo-Sub
+        _meta:
+          priority: 2560
 
     upstream:
       type: roundrobin

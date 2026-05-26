@@ -1,0 +1,82 @@
+routes:
+  - id: users
+    uris:
+      - /
+      - /*
+    plugins:
+      openid-connect:
+        client_id: apisix
+        client_secret: secret
+        discovery: http://authz_srv:8080/default/.well-known/openid-configuration
+        bearer_only: true
+        use_jwks: true
+        ssl_verify: false
+        set_access_token_header: true
+        _meta:
+          priority: 3000
+
+      serverless-pre-function:
+        phase: access
+        _meta:
+          priority: 2000
+        functions:
+          - |
+            return function(conf, ctx)
+              local core = require("apisix.core")
+              local cjson = require("cjson.safe")
+
+              local auth = core.request.header(ctx, "Authorization")
+              if not auth then
+                core.log.warn("missing Authorization header")
+                return
+              end
+
+              local token = auth:match("[Bb]earer%s+(.+)")
+              if not token then
+                core.log.warn("Authorization is not Bearer token")
+                return
+              end
+
+              local payload_b64 = token:match("^[^.]+%.([^.]+)%.[^.]+$")
+              if not payload_b64 then
+                core.log.warn("invalid JWT format")
+                return
+              end
+
+              local b64 = payload_b64:gsub("-", "+"):gsub("_", "/")
+              local rem = #b64 % 4
+              if rem == 2 then
+                b64 = b64 .. "=="
+              elseif rem == 3 then
+                b64 = b64 .. "="
+              elseif rem == 1 then
+                core.log.warn("invalid base64url JWT payload")
+                return
+              end
+
+              local decoded = ngx.decode_base64(b64)
+              if not decoded then
+                core.log.warn("could not decode JWT payload")
+                return
+              end
+
+              local claims, err = cjson.decode(decoded)
+              if not claims then
+                core.log.warn("could not parse JWT payload JSON: ", err)
+                return
+              end
+
+              if claims.sub then
+                core.request.set_header(ctx, "X-Subject", claims.sub)
+                core.log.warn("set X-Subject from JWT sub: ", claims.sub)
+              else
+                core.log.warn("JWT payload has no sub claim")
+              end
+            end
+
+    upstream:
+      type: roundrobin
+      nodes:
+        "upstream:80": 1
+
+#END

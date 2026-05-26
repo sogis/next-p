@@ -34,7 +34,7 @@ innerhalb des docker netzwerks:
 In der client bash das curl ausführen:
 
     TOKEN=$(
-    curl -s -X POST http://authz_srv:8080/default/token \
+    curl -s -X POST http://authn_srv:8080/default/token \
         -H 'Content-Type: application/x-www-form-urlencoded' \
         -d 'grant_type=client_credentials' \
         -d 'client_id=reader' \
@@ -51,10 +51,14 @@ Der Mock-Server codiert die client-id als "sub" in das token
 
 Ebenfalls in der client bash ausführen:
 
-    curl http://apisix:9080/your-route -H "Authorization: Bearer $TOKEN"
+    curl http://apisix:9080/kbs -H "Authorization: Bearer $TOKEN"
+
+Dieser Request wird in Richtung upstream weitergeleitet, da der user "reader" GET-Berechtigung auf die Url /kbs hat.
+
+    curl http://apisix:9080/xbs -H "Authorization: Bearer $TOKEN"
+
+Dieser Request wird geblockt, da der user "reader" keine Berechtigung auf die Url /xbs hat.
 
 ## Diverses
 
 Github-Issue, in dem gemäss KI das Consumer-Mapping für das openid-connect plugin gefordert wird: https://github.com/apache/apisix/issues/13037
-
-## Todo: Erweitern mit Casbin
