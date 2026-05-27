@@ -2,7 +2,7 @@ services:
   netl:
     image: sogis/netl
     container_name: netl
-    #user: "${NETL_UID}:${NETL_GID}"
+    user: "${NETL_UID}:${NETL_GID}"
     entrypoint: ["sleep", "20h"]
     init: true
     volumes:
@@ -14,4 +14,4 @@ services:
         target: /netl/repo
       - type: bind
         source: ../netl_build
-        target: /netl_build
+        target: /netl/netl_build

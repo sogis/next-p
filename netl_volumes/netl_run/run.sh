@@ -2,9 +2,9 @@
 
 set -euo pipefail
 
-# export NETL_UID=$(id -u)
-# export NETL_GID=$(id -g)
+export NETL_UID=$(id -u)
+export NETL_GID=$(id -g)
 
-# echo "Using NETL_UID=$NETL_UID NETL_GID=$NETL_GID"
+echo "Using NETL_UID=$NETL_UID NETL_GID=$NETL_GID"
 
 docker compose up -d

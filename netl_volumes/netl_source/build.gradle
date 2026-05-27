@@ -1,7 +1,10 @@
-buildDir = '/netl_build'
-
+allprojects {
+    layout.buildDirectory.set(
+        file("${rootProject.projectDir}/netl_build/${project.name}")
+    )
+}
 
 tasks.register('copy', Copy) {
-    from "$projectDir/build.gradle"
-    into buildDir
+    from layout.projectDirectory.dir("repo/themes/afu/kbs")
+    into layout.buildDirectory
 }
