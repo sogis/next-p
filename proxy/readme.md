@@ -58,7 +58,3 @@ Dieser Request wird in Richtung upstream weitergeleitet, da der user "reader" GE
     curl http://apisix:9080/xbs -H "Authorization: Bearer $TOKEN"
 
 Dieser Request wird geblockt, da der user "reader" keine Berechtigung auf die Url /xbs hat.
-
-## Diverses
-
-Github-Issue, in dem gemäss KI das Consumer-Mapping für das openid-connect plugin gefordert wird: https://github.com/apache/apisix/issues/13037
