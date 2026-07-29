@@ -50,7 +50,8 @@ public final class ConcurrentBatchSender {
                     submissionIndex,
                     requestPlan.endpoint(),
                     requestPlan.workload(),
-                    marker
+                    marker,
+                    requestPlan.queryParameters()
                 )));
             }
             if (!ready.await(config.requestTimeout().toMillis(), TimeUnit.MILLISECONDS)) {
@@ -77,14 +78,15 @@ public final class ConcurrentBatchSender {
         int submissionIndex,
         String endpoint,
         Workload workload,
-        RequestMarker marker
+        RequestMarker marker,
+        java.util.Map<String, String> queryParameters
     ) {
         return () -> {
             ready.countDown();
             if (!release.await(config.requestTimeout().toMillis(), TimeUnit.MILLISECONDS)) {
                 throw new AssertionError("batch release timed out");
             }
-            return client.send(submissionIndex, endpoint, workload, marker);
+            return client.send(submissionIndex, endpoint, workload, marker, queryParameters);
         };
     }
 }

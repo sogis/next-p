@@ -18,6 +18,7 @@ class RequestStartedFilter(QgsServerFilter):
         parameters = handler.parameterMap()
         request_id_query = parameters.get("FIFO_REQUEST_ID", "")
         run_id_query = parameters.get("FIFO_RUN_ID", "")
+        hold_ms = self._hold_millis(parameters.get("FIFO_HOLD_MS", ""))
 
         try:
             request_id_header = handler.requestHeader("X-Request-Id")
@@ -50,6 +51,7 @@ class RequestStartedFilter(QgsServerFilter):
             "header_error": header_error,
             "service": parameters.get("SERVICE", ""),
             "operation": parameters.get("REQUEST", ""),
+            "hold_ms": hold_ms,
         }
         sys.stderr.write(
             "FIFO_REQUEST_STARTED "
@@ -57,7 +59,19 @@ class RequestStartedFilter(QgsServerFilter):
             + "\n"
         )
         sys.stderr.flush()
+        if hold_ms:
+            # Test-only controlled contention. The sleep happens after the
+            # start event and holds this QGIS worker until the request resumes.
+            time.sleep(hold_ms / 1000)
         return True
+
+    @staticmethod
+    def _hold_millis(value):
+        try:
+            hold_ms = int(value)
+        except (TypeError, ValueError):
+            return 0
+        return max(0, min(hold_ms, 30000))
 
 
 class FifoObservabilityPlugin:

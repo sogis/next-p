@@ -17,6 +17,14 @@ public final class DockerComposeLogs {
     }
 
     public static void collectQgisLogs(Path destination, Duration timeout) {
+        collectLogs(destination, timeout, QGIS_SERVICES);
+    }
+
+    public static void collectHaproxyLogs(Path destination, Duration timeout) {
+        collectLogs(destination, timeout, List.of("haproxy"));
+    }
+
+    private static void collectLogs(Path destination, Duration timeout, List<String> services) {
         List<String> command = new ArrayList<>();
         String composeCommand = System.getenv("FIFO_DOCKER_COMPOSE_COMMAND");
         if (composeCommand == null || composeCommand.trim().isEmpty()) {
@@ -32,7 +40,7 @@ public final class DockerComposeLogs {
         }
         command.add("logs");
         command.add("--no-color");
-        command.addAll(QGIS_SERVICES);
+        command.addAll(services);
 
         try {
             Files.createDirectories(destination.getParent());

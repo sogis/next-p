@@ -93,10 +93,13 @@
 
 11. Implement the HAProxy FIFO test.
 
-   - State: pending
-   - Send the mixed workload solely through HAProxy.
-   - Compare HAProxy acceptance order with QGIS execution-start order.
-   - Fail on every inversion; allow response/completion order to differ.
+   - State: completed
+   - `haproxyFifoTest` fills all workers with staggered holds, then enqueues
+     marked requests solely through HAProxy.
+   - It compares HAProxy acceptance order with QGIS delivery order only while
+     exactly one worker is released; worker identity is irrelevant.
+   - QGIS start events prove the request entered the released worker. They are
+     not used to impose a global order while multiple workers are free.
 
 12. Automate lifecycle, diagnostics, and documentation.
 

@@ -62,14 +62,17 @@ matching log lines, and request details under
 docker compose up -d --wait
 gradle loggingFeasibilityTest
 gradle directQgisBaselineTest
+gradle haproxyFifoTest
 gradle fifoTest
 ```
 
-`fifoTest` runs feasibility first, then the direct-QGIS baseline. The baseline
-uses a heavy request on one replica and short requests on the other replicas;
-it passes only after a bounded run observes a QGIS start-order inversion.
-Use `-Dfifo.artifacts.dir=/path/to/artifacts` or `FIFO_ARTIFACTS_DIR` to change
-the artifact root.
+`fifoTest` runs feasibility, the direct-QGIS baseline, and the HAProxy FIFO
+assertion in that order. The HAProxy assertion fills every worker with a
+staggered test hold, queues marked requests, then verifies their release order
+when exactly one worker becomes available. QGIS start events prove delivery to
+the released worker; they are not compared globally while several workers are
+free. Use `-Dfifo.artifacts.dir=/path/to/artifacts` or
+`FIFO_ARTIFACTS_DIR` to change the artifact root.
 
 Copy `.env.example` to `.env` to override ports or deliberately update pinned
 image versions.

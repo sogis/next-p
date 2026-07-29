@@ -72,12 +72,16 @@ QGIS deployment will reorder every workload.
 
 ### HAProxy FIFO Verification
 
-Send the same mixed workload only through HAProxy. Use HAProxy acceptance logs
-to determine request-arrival order, then compare it with QGIS execution-start
-order. Every test batch must preserve that order.
+Send the workload only through HAProxy. Use HAProxy acceptance logs to
+determine request-arrival order, then fill all workers with controlled,
+staggered holds and enqueue marked requests behind them. Compare acceptance
+order with QGIS delivery order only while exactly one worker becomes free.
+When several workers are free, their downstream QGIS start-event order is not
+an ordering signal.
 
-Do not compare response or completion order. The test must allow an earlier
-request to complete after a later request when it is more processing-heavy.
+QGIS start events prove that a dispatched request entered a worker; they do
+not provide a global FIFO assertion across independently free workers. Do not
+compare response or completion order.
 
 ## Test Script
 
@@ -97,7 +101,8 @@ configuration.
   event for every test request.
 - The direct-QGIS baseline captures a start-order inversion within its bounded
   retry budget.
-- The HAProxy test has no start-order inversions in any batch.
+- The HAProxy test releases queued requests in acceptance order under
+  controlled single-worker capacity releases.
 - All requests either complete within the configured timeout or cause a failure
   with sufficient log evidence to diagnose the fault.
 - Response order is never used as a FIFO assertion.

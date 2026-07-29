@@ -3,8 +3,11 @@ package org.example.qgisfifo;
 import io.restassured.RestAssured;
 import io.restassured.config.HttpClientConfig;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 
 import java.time.Duration;
+import java.util.Collections;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
@@ -17,9 +20,19 @@ public final class QgisRequestClient {
     }
 
     public QgisResponse send(int submissionIndex, String endpoint, Workload workload, RequestMarker marker) {
+        return send(submissionIndex, endpoint, workload, marker, Collections.emptyMap());
+    }
+
+    public QgisResponse send(
+        int submissionIndex,
+        String endpoint,
+        Workload workload,
+        RequestMarker marker,
+        Map<String, String> queryParameters
+    ) {
         long startedAt = System.nanoTime();
         int timeoutMillis = Math.toIntExact(config.requestTimeout().toMillis());
-        Response response = given()
+        RequestSpecification request = given()
             .baseUri(endpoint)
             .config(RestAssured.config().httpClient(HttpClientConfig.httpClientConfig()
                 .setParam("http.connection.timeout", timeoutMillis)
@@ -28,8 +41,11 @@ public final class QgisRequestClient {
             .header("X-Run-Id", marker.runId())
             .header("X-Request-Id", marker.requestId())
             .queryParam("FIFO_RUN_ID", marker.runId())
-            .queryParam("FIFO_REQUEST_ID", marker.requestId())
-            .get("?" + workload.query(config));
+            .queryParam("FIFO_REQUEST_ID", marker.requestId());
+        for (Map.Entry<String, String> parameter : queryParameters.entrySet()) {
+            request.queryParam(parameter.getKey(), parameter.getValue());
+        }
+        Response response = request.get("?" + workload.query(config));
         Duration elapsed = Duration.ofNanos(System.nanoTime() - startedAt);
 
         String contentType = response.getContentType();

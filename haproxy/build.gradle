@@ -51,8 +51,23 @@ def directQgisBaselineTest = tasks.register('directQgisBaselineTest', Test) {
     mustRunAfter loggingFeasibilityTest
 }
 
+def haproxyFifoTest = tasks.register('haproxyFifoTest', Test) {
+    group = 'verification'
+    description = 'Verifies HAProxy acceptance order at QGIS execution start.'
+    useJUnitPlatform {
+        includeTags 'haproxy-fifo'
+    }
+    mustRunAfter directQgisBaselineTest
+}
+
+[loggingFeasibilityTest, directQgisBaselineTest, haproxyFifoTest].each { integrationTask ->
+    integrationTask.configure {
+        outputs.upToDateWhen { false }
+    }
+}
+
 tasks.register('fifoTest') {
     group = 'verification'
     description = 'Runs the FIFO integration-test pipeline, beginning with logging feasibility.'
-    dependsOn loggingFeasibilityTest, directQgisBaselineTest
+    dependsOn loggingFeasibilityTest, directQgisBaselineTest, haproxyFifoTest
 }
