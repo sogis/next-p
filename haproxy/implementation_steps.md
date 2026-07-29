@@ -82,11 +82,14 @@
 
 10. Implement the direct-QGIS baseline test.
 
-   - State: pending
-   - Send bounded, concurrent mixed-workload batches directly to all replicas.
-   - Compare client submission order with QGIS start events.
-   - Pass only after observing at least one bounded-run start-order inversion.
-   - Report the IDs, worker/container identities, and relevant log excerpts.
+   - State: completed
+   - `directQgisBaselineTest` sends bounded, concurrent mixed-workload batches
+     to all direct replica endpoints.
+   - It correlates every response with exactly one QGIS start event and orders
+     those events by the emitted monotonic execution-start timestamp.
+   - It passes only on an observed start-order inversion within the configured
+     retry budget, retaining IDs, workload, endpoint, worker, hostname, and
+     raw QGIS logs for every attempt.
 
 11. Implement the HAProxy FIFO test.
 

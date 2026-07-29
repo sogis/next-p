@@ -61,12 +61,15 @@ matching log lines, and request details under
 ```bash
 docker compose up -d --wait
 gradle loggingFeasibilityTest
+gradle directQgisBaselineTest
 gradle fifoTest
 ```
 
-`fifoTest` starts with `loggingFeasibilityTest`; future FIFO assertion tasks
-will be attached to that pipeline. Use `-Dfifo.artifacts.dir=/path/to/artifacts`
-or `FIFO_ARTIFACTS_DIR` to change the artifact root.
+`fifoTest` runs feasibility first, then the direct-QGIS baseline. The baseline
+uses a heavy request on one replica and short requests on the other replicas;
+it passes only after a bounded run observes a QGIS start-order inversion.
+Use `-Dfifo.artifacts.dir=/path/to/artifacts` or `FIFO_ARTIFACTS_DIR` to change
+the artifact root.
 
 Copy `.env.example` to `.env` to override ports or deliberately update pinned
 image versions.

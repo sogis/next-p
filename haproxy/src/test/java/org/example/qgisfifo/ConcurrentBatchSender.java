@@ -23,17 +23,35 @@ public final class ConcurrentBatchSender {
         if (workloads.isEmpty()) {
             throw new IllegalArgumentException("workloads must not be empty");
         }
-        int workers = Math.min(config.concurrency(), workloads.size());
+        List<RequestPlan> requestPlans = new ArrayList<>();
+        for (Workload workload : workloads) {
+            requestPlans.add(new RequestPlan(endpoint, workload));
+        }
+        return send(runId, requestPlans);
+    }
+
+    public List<QgisResponse> send(String runId, List<RequestPlan> requestPlans) {
+        if (requestPlans.isEmpty()) {
+            throw new IllegalArgumentException("request plans must not be empty");
+        }
+        int workers = Math.min(config.concurrency(), requestPlans.size());
         ExecutorService executor = Executors.newFixedThreadPool(workers);
         CountDownLatch ready = new CountDownLatch(workers);
         CountDownLatch release = new CountDownLatch(1);
         try {
             List<Future<QgisResponse>> futures = new ArrayList<>();
-            for (int index = 0; index < workloads.size(); index++) {
+            for (int index = 0; index < requestPlans.size(); index++) {
                 final int submissionIndex = index;
-                final Workload workload = workloads.get(index);
+                final RequestPlan requestPlan = requestPlans.get(index);
                 final RequestMarker marker = RequestMarker.create(runId);
-                futures.add(executor.submit(requestTask(ready, release, submissionIndex, endpoint, workload, marker)));
+                futures.add(executor.submit(requestTask(
+                    ready,
+                    release,
+                    submissionIndex,
+                    requestPlan.endpoint(),
+                    requestPlan.workload(),
+                    marker
+                )));
             }
             if (!ready.await(config.requestTimeout().toMillis(), TimeUnit.MILLISECONDS)) {
                 throw new AssertionError("request tasks did not become ready before the timeout");

@@ -34,16 +34,25 @@ tasks.withType(Test).configureEach {
     systemProperties fifoSystemProperties
 }
 
-tasks.register('loggingFeasibilityTest', Test) {
+def loggingFeasibilityTest = tasks.register('loggingFeasibilityTest', Test) {
     group = 'verification'
     description = 'Verifies QGIS execution-start correlation against the running Compose stack.'
     useJUnitPlatform {
-        includeTags 'integration'
+        includeTags 'feasibility'
     }
+}
+
+def directQgisBaselineTest = tasks.register('directQgisBaselineTest', Test) {
+    group = 'verification'
+    description = 'Demonstrates a bounded direct-QGIS execution-start inversion.'
+    useJUnitPlatform {
+        includeTags 'direct-baseline'
+    }
+    mustRunAfter loggingFeasibilityTest
 }
 
 tasks.register('fifoTest') {
     group = 'verification'
     description = 'Runs the FIFO integration-test pipeline, beginning with logging feasibility.'
-    dependsOn tasks.named('loggingFeasibilityTest')
+    dependsOn loggingFeasibilityTest, directQgisBaselineTest
 }

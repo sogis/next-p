@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /** Proves that the running QGIS deployment emits one complete start event. */
 @Tag("integration")
+@Tag("feasibility")
 class LoggingFeasibilityIntegrationTest {
     private static final Duration LOG_COLLECTION_TIMEOUT = Duration.ofSeconds(30);
 
