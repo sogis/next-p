@@ -103,8 +103,10 @@
 
 12. Automate lifecycle, diagnostics, and documentation.
 
-   - State: pending
-   - Start Compose, wait for real QGIS health checks, and tear down after tests.
-   - Retain artifacts after failures or when a debug-retain option is enabled.
-   - Document local and CI commands, required Docker resources, and known
-     timing sensitivity of the direct baseline.
+   - State: completed
+   - `scripts/run-fifo-tests.sh` starts Compose, waits for health checks, runs
+     the full Gradle pipeline, and tears the stack down after success.
+   - Artifacts are never deleted; failures and `FIFO_RETAIN_STACK=true` retain
+     the running stack for diagnosis.
+   - Local and CI requirements, ports, Docker capacity, and the timing-sensitive
+     direct baseline are documented.

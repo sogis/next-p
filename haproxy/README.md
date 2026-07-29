@@ -18,8 +18,9 @@ HAProxy endpoint:
 
 All four HAProxy backends are active. Each QGIS server has `maxconn 1`, so a
 replica handles no more than one active HAProxy connection and excess requests
-wait in HAProxy. The FIFO test validates the resulting QGIS start order from
-observed events; it does not infer the order from responses.
+wait in HAProxy. The treatment verifies FIFO queue release under controlled
+single-worker capacity releases; it does not infer ordering from responses or
+from cross-worker QGIS hook timing.
 
 HAProxy's request-stage Lua action emits one structured
 `FIFO_HAPROXY_ACCEPTED` event before backend selection. Its increasing
@@ -45,12 +46,13 @@ concurrency, direct retry count, and request timeout through Gradle system prope
 (`fifo.*`) or environment variables (`FIFO_*`).
 
 ```bash
-gradle test
-gradle test -Dfifo.concurrency=4 -Dfifo.request.timeout.seconds=90
+./gradlew test
+./gradlew fifoTest -Dfifo.concurrency=4 -Dfifo.request.timeout.seconds=90
 ```
 
-The current unit tests validate the configuration and request-ID generation.
-Integration assertions and log parsers are added in subsequent steps.
+The unit tests validate the configuration and request-ID generation. The
+external-stack integration tasks are deliberately never up-to-date: every
+`fifoTest` invocation reruns its live assertions.
 
 The feasibility test requires the Compose stack to be running and Docker
 Compose to be available on the test runner. It exercises both a direct QGIS
@@ -58,12 +60,29 @@ route and the HAProxy route, then stores an unmodified aggregate QGIS log,
 matching log lines, and request details under
 `artifacts/feasibility/<run-id>/`.
 
+## Run the full experiment
+
 ```bash
-docker compose up -d --wait
-gradle loggingFeasibilityTest
-gradle directQgisBaselineTest
-gradle haproxyFifoTest
-gradle fifoTest
+scripts/run-fifo-tests.sh
+```
+
+The runner starts the Compose stack, waits for its real health checks, runs
+`fifoTest`, and tears the stack down after success. It never deletes
+`artifacts/`. On a test failure it leaves the stack running for diagnosis; set
+`FIFO_RETAIN_STACK=true` to retain it after a successful run as well.
+
+```bash
+FIFO_RETAIN_STACK=true scripts/run-fifo-tests.sh
+FIFO_ARTIFACTS_DIR=/tmp/fifo-artifacts scripts/run-fifo-tests.sh
+```
+
+To run individual live assertions against an already-running stack:
+
+```bash
+./gradlew loggingFeasibilityTest
+./gradlew directQgisBaselineTest
+./gradlew haproxyFifoTest
+./gradlew fifoTest
 ```
 
 `fifoTest` runs feasibility, the direct-QGIS baseline, and the HAProxy FIFO
@@ -76,6 +95,24 @@ free. Use `-Dfifo.artifacts.dir=/path/to/artifacts` or
 
 Copy `.env.example` to `.env` to override ports or deliberately update pinned
 image versions.
+
+## Local and CI requirements
+
+- Docker Engine and Docker Compose v2; ports `18080` through `18084` must be
+  available to the runner.
+- Java 21 on the runner. Use the included Gradle 8.12.1 wrapper
+  (`./gradlew`); its first use downloads that pinned Gradle distribution. Set
+  `FIFO_GRADLE_COMMAND` when the lifecycle script must use a different Gradle
+  executable or location.
+- Capacity for five containers (four QGIS servers and HAProxy) plus the
+  3072×3072 direct-baseline rendering workload. Reserve a dedicated Docker
+  daemon in CI and increase its CPU or memory allocation if the heavy workload
+  times out.
+
+The direct baseline is intentionally empirical and timing-sensitive: it may
+need its bounded retry budget or heavy workload dimensions tuned for a slower
+or faster runner. A failure to observe an inversion is a failed baseline, not
+evidence of global direct-QGIS FIFO.
 
 ```bash
 docker compose up -d
