@@ -1,0 +1,97 @@
+# Implementation Steps
+
+1. Define the test contract.
+
+   - State: completed
+   - Direct requests target four individually addressable QGIS replicas.
+   - HAProxy is the treatment endpoint.
+   - FIFO concerns QGIS execution-start order, never response order.
+   - All four QGIS backends are active; each HAProxy-to-QGIS connection has
+     `maxconn 1`.
+
+2. Create the Docker Compose foundation.
+
+   - State: completed
+   - QGIS Server and HAProxy images are pinned.
+   - Four QGIS replicas, HAProxy, published ports, and real QGIS health checks
+     are configured.
+   - QGIS requests use the image's FastCGI endpoint, `/ows/`.
+
+3. Configure request correlation.
+
+   - State: completed
+   - Requests carry `X-Run-Id` and `X-Request-Id`.
+   - The Nginx FastCGI parameter configuration forwards those headers to QGIS.
+   - The feasibility probe also sends matching query markers for diagnostics.
+
+4. Implement and validate QGIS execution-start observability.
+
+   - State: completed
+   - The `fifo_observability` QGIS Server plugin is installed.
+   - Its `onRequestReady()` filter emits exactly one structured
+     `FIFO_REQUEST_STARTED` record before QGIS enters its core-service switch.
+   - Each event includes run/request IDs, QGIS worker PID, container hostname,
+     requested service, and operation.
+   - The logging-feasibility probe validates complete correlation records.
+   - The probe passed both direct-QGIS and HAProxy paths.
+
+5. Implement authoritative HAProxy arrival-order logging.
+
+   - State: pending
+   - Add an acceptance-stage, monotonically increasing arrival sequence,
+     likely with a small HAProxy Lua hook.
+   - Include run ID and request ID in each event.
+   - Do not use ordinary HAProxy transaction-log line order, because it is
+     emitted at transaction completion rather than request acceptance.
+
+6. Create deterministic workloads and test data.
+
+   - State: pending
+   - Replace the empty fixture project with fixed data and layers.
+   - Provide a short request and a processing-heavy request.
+   - Calibrate concurrency, request sizes, and timeouts for local and CI use.
+
+7. Create the Java Maven integration-test project.
+
+   - State: pending
+   - Use JUnit 5 and Rest Assured.
+   - Generate unique run/request IDs and issue concurrent request batches.
+   - Make URLs, replica count, workload shape, timeouts, and retry limits
+     configurable through Maven properties or environment variables.
+
+8. Add log collection and parsers.
+
+   - State: pending
+   - Retain unmodified HAProxy and QGIS logs for each test run.
+   - Parse HAProxy acceptance sequence and QGIS start sequence by request ID.
+   - Add parser unit tests for valid, missing, duplicate, and malformed events.
+
+9. Move the logging-feasibility probe into the Maven test suite.
+
+   - State: pending
+   - Run it before every FIFO assertion suite.
+   - Fail with matching log excerpts and active configuration if correlation is
+     incomplete.
+
+10. Implement the direct-QGIS baseline test.
+
+   - State: pending
+   - Send bounded, concurrent mixed-workload batches directly to all replicas.
+   - Compare client submission order with QGIS start events.
+   - Pass only after observing at least one bounded-run start-order inversion.
+   - Report the IDs, worker/container identities, and relevant log excerpts.
+
+11. Implement the HAProxy FIFO test.
+
+   - State: pending
+   - Send the mixed workload solely through HAProxy.
+   - Compare HAProxy acceptance order with QGIS execution-start order.
+   - Fail on every inversion; allow response/completion order to differ.
+
+12. Automate lifecycle, diagnostics, and documentation.
+
+   - State: pending
+   - Start Compose, wait for real QGIS health checks, and tear down after tests.
+   - Retain artifacts after failures or when a debug-retain option is enabled.
+   - Document local and CI commands, required Docker resources, and known
+     timing sensitivity of the direct baseline.

@@ -1,0 +1,6 @@
+[general]
+name=FIFO Observability
+description=Emits request-start evidence for the HAProxy FIFO integration test.
+version=0.1.0
+qgisMinimumVersion=3.40
+server=True
