@@ -1,6 +1,7 @@
 package org.example.qgisfifo;
 
 import java.time.Duration;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,7 @@ public final class FifoTestConfig {
     private final Duration requestTimeout;
     private final String shortWorkloadQuery;
     private final String heavyWorkloadQuery;
+    private final Path artifactRoot;
 
     private FifoTestConfig(
         List<String> directUrls,
@@ -30,7 +32,8 @@ public final class FifoTestConfig {
         int directRetryBatches,
         Duration requestTimeout,
         String shortWorkloadQuery,
-        String heavyWorkloadQuery
+        String heavyWorkloadQuery,
+        Path artifactRoot
     ) {
         this.directUrls = directUrls;
         this.haproxyUrl = haproxyUrl;
@@ -40,6 +43,7 @@ public final class FifoTestConfig {
         this.requestTimeout = requestTimeout;
         this.shortWorkloadQuery = shortWorkloadQuery;
         this.heavyWorkloadQuery = heavyWorkloadQuery;
+        this.artifactRoot = artifactRoot;
     }
 
     public static FifoTestConfig load() {
@@ -52,7 +56,8 @@ public final class FifoTestConfig {
             positiveInt(value("fifo.direct.retry.batches", "FIFO_DIRECT_RETRY_BATCHES", "5"), "direct retry batches"),
             Duration.ofSeconds(positiveInt(value("fifo.request.timeout.seconds", "FIFO_REQUEST_TIMEOUT_SECONDS", "60"), "request timeout")),
             value("fifo.workload.short.query", "FIFO_SHORT_WMS_QUERY", Workload.SHORT.defaultQuery()),
-            value("fifo.workload.heavy.query", "FIFO_HEAVY_WMS_QUERY", Workload.HEAVY.defaultQuery())
+            value("fifo.workload.heavy.query", "FIFO_HEAVY_WMS_QUERY", Workload.HEAVY.defaultQuery()),
+            Path.of(value("fifo.artifacts.dir", "FIFO_ARTIFACTS_DIR", "artifacts"))
         );
     }
 
@@ -86,6 +91,20 @@ public final class FifoTestConfig {
 
     public String heavyWorkloadQuery() {
         return heavyWorkloadQuery;
+    }
+
+    public Path artifactRoot() {
+        return artifactRoot;
+    }
+
+    public String describe() {
+        return "directUrls=" + directUrls
+            + ", haproxyUrl=" + haproxyUrl
+            + ", batchSize=" + batchSize
+            + ", concurrency=" + concurrency
+            + ", directRetryBatches=" + directRetryBatches
+            + ", requestTimeout=" + requestTimeout
+            + ", artifactRoot=" + artifactRoot.toAbsolutePath();
     }
 
     private static String value(String propertyName, String environmentName, String defaultValue) {

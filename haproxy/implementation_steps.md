@@ -71,10 +71,14 @@
 
 9. Move the logging-feasibility probe into the Gradle test suite.
 
-   - State: pending
-   - Run it before every FIFO assertion suite.
-   - Fail with matching log excerpts and active configuration if correlation is
-     incomplete.
+   - State: completed
+   - `loggingFeasibilityTest` sends correlated requests directly and through
+     HAProxy, retains raw QGIS logs, and verifies exactly one complete start
+     event for each route.
+   - `fifoTest` begins with the feasibility task, so it is the prerequisite for
+     every later FIFO assertion task.
+   - Failures include matching log excerpts, artifact locations, and active
+     configuration.
 
 10. Implement the direct-QGIS baseline test.
 

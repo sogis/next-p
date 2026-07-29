@@ -52,6 +52,22 @@ gradle test -Dfifo.concurrency=4 -Dfifo.request.timeout.seconds=90
 The current unit tests validate the configuration and request-ID generation.
 Integration assertions and log parsers are added in subsequent steps.
 
+The feasibility test requires the Compose stack to be running and Docker
+Compose to be available on the test runner. It exercises both a direct QGIS
+route and the HAProxy route, then stores an unmodified aggregate QGIS log,
+matching log lines, and request details under
+`artifacts/feasibility/<run-id>/`.
+
+```bash
+docker compose up -d --wait
+gradle loggingFeasibilityTest
+gradle fifoTest
+```
+
+`fifoTest` starts with `loggingFeasibilityTest`; future FIFO assertion tasks
+will be attached to that pipeline. Use `-Dfifo.artifacts.dir=/path/to/artifacts`
+or `FIFO_ARTIFACTS_DIR` to change the artifact root.
+
 Copy `.env.example` to `.env` to override ports or deliberately update pinned
 image versions.
 

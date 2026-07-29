@@ -13,5 +13,6 @@ class FifoTestConfigTest {
         assertEquals("http://127.0.0.1:18080/ows/", config.haproxyUrl());
         assertEquals(16, config.batchSize());
         assertEquals(8, config.concurrency());
+        assertEquals("artifacts", config.artifactRoot().toString());
     }
 }

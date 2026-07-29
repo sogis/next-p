@@ -21,5 +21,29 @@ dependencies {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'integration'
+    }
+}
+
+def fifoSystemProperties = System.properties.findAll { key, value ->
+    key.toString().startsWith('fifo.')
+}
+
+tasks.withType(Test).configureEach {
+    systemProperties fifoSystemProperties
+}
+
+tasks.register('loggingFeasibilityTest', Test) {
+    group = 'verification'
+    description = 'Verifies QGIS execution-start correlation against the running Compose stack.'
+    useJUnitPlatform {
+        includeTags 'integration'
+    }
+}
+
+tasks.register('fifoTest') {
+    group = 'verification'
+    description = 'Runs the FIFO integration-test pipeline, beginning with logging feasibility.'
+    dependsOn tasks.named('loggingFeasibilityTest')
 }
