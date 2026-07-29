@@ -37,19 +37,21 @@
 
 5. Implement authoritative HAProxy arrival-order logging.
 
-   - State: pending
-   - Add an acceptance-stage, monotonically increasing arrival sequence,
-     likely with a small HAProxy Lua hook.
-   - Include run ID and request ID in each event.
-   - Do not use ordinary HAProxy transaction-log line order, because it is
-     emitted at transaction completion rather than request acceptance.
+   - State: completed
+   - A request-stage HAProxy Lua action emits a monotonically increasing
+     `arrival_sequence` before backend selection.
+   - Each `FIFO_HAPROXY_ACCEPTED` event contains the run ID and request ID.
+   - The action uses one shared Lua state with HAProxy configured for one
+     thread; ordinary HAProxy transaction-log order remains non-authoritative.
 
 6. Create deterministic workloads and test data.
 
-   - State: pending
-   - Replace the empty fixture project with fixed data and layers.
-   - Provide a short request and a processing-heavy request.
-   - Calibrate concurrency, request sizes, and timeouts for local and CI use.
+   - State: completed
+   - The fixed `fifo_grid` GeoJSON layer is served by the QGIS fixture project.
+   - A no-render `GetCapabilities` request is defined as the short workload.
+   - A 3072×3072 `GetMap` render is defined as the processing-heavy workload.
+   - The query definitions are configuration-driven for resource-constrained
+     local or CI environments.
 
 7. Create the Java Maven integration-test project.
 

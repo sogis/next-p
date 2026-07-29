@@ -88,6 +88,7 @@ services:
       - "${HAPROXY_HTTP_PORT:-18080}:8080"
     volumes:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./haproxy/lua/arrival_logger.lua:/usr/local/etc/haproxy/lua/arrival_logger.lua:ro
     healthcheck:
       test: ["CMD", "haproxy", "-c", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
       interval: 5s

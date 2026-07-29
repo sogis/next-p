@@ -1,11 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<qgis version="3.40.0" projectname="FIFO observability fixture">
+<qgis version="3.40.0" projectname="FIFO workload fixture">
   <homePath path=""/>
-  <title>FIFO observability fixture</title>
+  <title>FIFO workload fixture</title>
   <autotransaction active="0" source="project"/>
   <evaluateDefaultValues active="0"/>
-  <layer-tree-group name="" expanded="1" checked="Qt::Checked"/>
-  <projectlayers/>
+  <layer-tree-group name="" expanded="1" checked="Qt::Checked">
+    <layer-tree-layer id="fifo_grid_5a4cf96e_0a1a_4d2d_9fa5_000000000001" name="fifo_grid" source="/io/data/data/fifo_grid.geojson" providerKey="ogr" expanded="1" checked="Qt::Checked"/>
+  </layer-tree-group>
+  <projectlayers>
+    <maplayer type="vector" geometry="Polygon" simplifyDrawingTol="1" simplifyLocal="1" simplifyMaxScale="1" simplifyAlgorithm="0" readOnly="0" labelsEnabled="0" hasScaleBasedVisibilityFlag="0" autoRefreshEnabled="0">
+      <id>fifo_grid_5a4cf96e_0a1a_4d2d_9fa5_000000000001</id>
+      <datasource>/io/data/data/fifo_grid.geojson</datasource>
+      <layername>fifo_grid</layername>
+      <srs>
+        <spatialrefsys nativeFormat="Wkt">
+          <wkt>GEOGCRS[&quot;WGS 84&quot;,DATUM[&quot;World Geodetic System 1984&quot;,ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,LENGTHUNIT[&quot;metre&quot;,1]]],PRIMEM[&quot;Greenwich&quot;,0,ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],CS[ellipsoidal,2],AXIS[&quot;geodetic latitude (Lat)&quot;,north,ORDER[1],ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],AXIS[&quot;geodetic longitude (Lon)&quot;,east,ORDER[2],ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],ID[&quot;EPSG&quot;,4326]]</wkt>
+          <authid>EPSG:4326</authid>
+          <description>WGS 84</description>
+          <projectionacronym>longlat</projectionacronym>
+          <ellipsoidacronym>EPSG:7030</ellipsoidacronym>
+          <geographicflag>true</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <provider encoding="UTF-8">ogr</provider>
+      <layerOpacity>1</layerOpacity>
+      <blendMode>0</blendMode>
+      <featureBlendMode>0</featureBlendMode>
+      <renderer-v2 type="singleSymbol" enableorderby="0" symbollevels="0" referencescale="-1">
+        <symbols>
+          <symbol name="0" type="fill" alpha="1" clip_to_extent="1" force_rhr="0">
+            <layer class="SimpleFill" enabled="1" locked="0" pass="0">
+              <Option type="Map">
+                <Option name="color" type="QString" value="66,135,245,255"/>
+                <Option name="outline_color" type="QString" value="20,50,100,255"/>
+                <Option name="outline_style" type="QString" value="solid"/>
+                <Option name="outline_width" type="QString" value="0.6"/>
+                <Option name="outline_width_unit" type="QString" value="MM"/>
+                <Option name="style" type="QString" value="solid"/>
+              </Option>
+            </layer>
+          </symbol>
+        </symbols>
+        <rotation/>
+        <sizescale/>
+      </renderer-v2>
+      <customproperties/>
+    </maplayer>
+  </projectlayers>
   <properties>
     <WMSServiceCapabilities>true</WMSServiceCapabilities>
     <WMSInfoFormatSIA2045>false</WMSInfoFormatSIA2045>
@@ -14,22 +55,12 @@
   <projectMetadata>
     <identifier>qgis-haproxy-fifo</identifier>
     <parentidentifier></parentidentifier>
-    <language></language>
+    <language>en</language>
     <type>project</type>
-    <title>FIFO observability fixture</title>
-    <abstract>Fixed project used only by the HAProxy FIFO integration tests.</abstract>
+    <title>FIFO workload fixture</title>
+    <abstract>Fixed local grid used only by HAProxy FIFO integration tests.</abstract>
     <links/>
     <fees></fees>
-    <encoding></encoding>
-    <crs>
-      <spatialrefsys nativeFormat="Wkt">
-        <wkt>GEOGCRS[&quot;WGS 84&quot;,ENSEMBLE[&quot;World Geodetic System 1984 ensemble&quot;,MEMBER[&quot;World Geodetic System 1984 (Transit)&quot;],MEMBER[&quot;World Geodetic System 1984 (G730)&quot;],MEMBER[&quot;World Geodetic System 1984 (G873)&quot;],MEMBER[&quot;World Geodetic System 1984 (G1150)&quot;],MEMBER[&quot;World Geodetic System 1984 (G1674)&quot;],MEMBER[&quot;World Geodetic System 1984 (G1762)&quot;],MEMBER[&quot;World Geodetic System 1984 (G2139)&quot;],MEMBER[&quot;World Geodetic System 1984 (G2296)&quot;],ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,LENGTHUNIT[&quot;metre&quot;,1]],ENSEMBLEACCURACY[2.0],PRIMEM[&quot;Greenwich&quot;,0,ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],CS[ellipsoidal,2],AXIS[&quot;geodetic latitude (Lat)&quot;,north,ORDER[1],ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],AXIS[&quot;geodetic longitude (Lon)&quot;,east,ORDER[2],ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],USAGE[SCOPE[&quot;Horizontal component of 3D system.&quot;],AREA[&quot;World.&quot;],BBOX[-90,-180,90,180]],ID[&quot;EPSG&quot;,4326]]</wkt>
-        <authid>EPSG:4326</authid>
-        <description>WGS 84</description>
-        <projectionacronym>longlat</projectionacronym>
-        <ellipsoidacronym>EPSG:7030</ellipsoidacronym>
-        <geographicflag>true</geographicflag>
-      </spatialrefsys>
-    </crs>
+    <encoding>UTF-8</encoding>
   </projectMetadata>
 </qgis>

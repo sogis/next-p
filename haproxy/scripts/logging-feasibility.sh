@@ -19,19 +19,19 @@ mkdir -p "$artifact_dir"
 
 url="http://127.0.0.1:${port}/ows/?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities&FIFO_RUN_ID=${run_id}&FIFO_REQUEST_ID=${request_id}"
 
-echo "Sending feasibility request ${request_id} to qgis-1"
+echo "Sending feasibility request ${request_id} to ${port}"
 curl --fail --silent --show-error --connect-timeout 5 --max-time 30 \
   -H "X-Run-Id: ${run_id}" \
   -H "X-Request-Id: ${request_id}" \
   "$url" >"${artifact_dir}/response.xml"
 
-"${compose[@]}" logs --no-color qgis-1 >"${artifact_dir}/qgis-1.log"
+"${compose[@]}" logs --no-color qgis-1 qgis-2 qgis-3 qgis-4 >"${artifact_dir}/qgis.log"
 
-if ! grep -F -- "$request_id" "${artifact_dir}/qgis-1.log" >"${artifact_dir}/matching.log"; then
+if ! grep -F -- "$request_id" "${artifact_dir}/qgis.log" >"${artifact_dir}/matching.log"; then
   cat >&2 <<EOF
 LOGGING FEASIBILITY FAILED
 QGIS did not emit the request marker '${request_id}'.
-Raw log: ${artifact_dir}/qgis-1.log
+Raw log: ${artifact_dir}/qgis.log
 
 The request did not reach the QGIS observability plugin. Check that the plugin
 was loaded and that the upstream HTTP server forwards X-Request-Id.

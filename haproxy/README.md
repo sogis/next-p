@@ -21,6 +21,21 @@ replica handles no more than one active HAProxy connection and excess requests
 wait in HAProxy. The FIFO test validates the resulting QGIS start order from
 observed events; it does not infer the order from responses.
 
+HAProxy's request-stage Lua action emits one structured
+`FIFO_HAPROXY_ACCEPTED` event before backend selection. Its increasing
+`arrival_sequence` is the authoritative ordering input for the treatment test.
+
+## Workloads
+
+The fixed `fifo_grid` GeoJSON layer is part of the project and has no external
+dependencies. The request definitions in `qgis/workloads.env` provide:
+
+- `SHORT_WMS_QUERY`: a `GetCapabilities` request with no map rendering.
+- `HEAVY_WMS_QUERY`: a 3072×3072 WMS `GetMap` render of `fifo_grid`.
+
+The heavy query is intentionally configuration-driven. Reduce `WIDTH` and
+`HEIGHT` for memory-constrained CI workers, but retain the same request shape.
+
 Copy `.env.example` to `.env` to override ports or deliberately update pinned
 image versions.
 
