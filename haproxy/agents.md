@@ -35,7 +35,7 @@ the request-arrival order for the HAProxy treatment.
   create both short and processing-heavy requests.
 - HAProxy configuration with explicit backend connection limits, queue and
   request timeouts, request-ID logging, and an optional stats/admin endpoint.
-- A Java Maven test project using JUnit 5 and Rest Assured.
+- A Java Gradle test project using Java 21, JUnit 5, and Rest Assured.
 - Log collection and parsing utilities used by the integration tests.
 
 ## Test Observability
@@ -84,7 +84,7 @@ request to complete after a later request when it is more processing-heavy.
 Use JUnit 5 and Rest Assured for all client requests and response validation.
 Use concurrent Java tasks to maintain in-flight load while assigning each
 request a known ID. Keep workload shape, replica count, retries, timeouts, and
-base URLs configurable through Maven properties or environment variables.
+base URLs configurable through Gradle system properties or environment variables.
 
 The tests must reset their log window and use a unique run identifier so that
 events from prior tests cannot affect assertions. Failures must print the

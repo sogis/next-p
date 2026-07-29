@@ -53,13 +53,14 @@
    - The query definitions are configuration-driven for resource-constrained
      local or CI environments.
 
-7. Create the Java Maven integration-test project.
+7. Create the Java Gradle integration-test project.
 
-   - State: pending
-   - Use JUnit 5 and Rest Assured.
-   - Generate unique run/request IDs and issue concurrent request batches.
-   - Make URLs, replica count, workload shape, timeouts, and retry limits
-     configurable through Maven properties or environment variables.
+   - State: completed
+   - The root Gradle project targets Java 21 and uses JUnit 5 and Rest Assured.
+   - Request markers are unique per run and the batch sender releases requests
+     concurrently while preserving client submission indexes.
+   - URLs, workload queries, batch size, concurrency, timeouts, and retry
+     limits are configurable through Gradle system properties or environment variables.
 
 8. Add log collection and parsers.
 
@@ -68,7 +69,7 @@
    - Parse HAProxy acceptance sequence and QGIS start sequence by request ID.
    - Add parser unit tests for valid, missing, duplicate, and malformed events.
 
-9. Move the logging-feasibility probe into the Maven test suite.
+9. Move the logging-feasibility probe into the Gradle test suite.
 
    - State: pending
    - Run it before every FIFO assertion suite.

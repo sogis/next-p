@@ -36,6 +36,22 @@ dependencies. The request definitions in `qgis/workloads.env` provide:
 The heavy query is intentionally configuration-driven. Reduce `WIDTH` and
 `HEIGHT` for memory-constrained CI workers, but retain the same request shape.
 
+## Java test harness
+
+The root Gradle project targets Java 21 and contains the JUnit 5 and Rest
+Assured test foundation.
+It supplies configurable direct/HAProxy URLs, workload queries, batch size,
+concurrency, direct retry count, and request timeout through Gradle system properties
+(`fifo.*`) or environment variables (`FIFO_*`).
+
+```bash
+gradle test
+gradle test -Dfifo.concurrency=4 -Dfifo.request.timeout.seconds=90
+```
+
+The current unit tests validate the configuration and request-ID generation.
+Integration assertions and log parsers are added in subsequent steps.
+
 Copy `.env.example` to `.env` to override ports or deliberately update pinned
 image versions.
 
