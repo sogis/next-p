@@ -2,7 +2,7 @@
 
 In diesem Prototyp wird erarbeitet, wie mit Apache apisix als PDP und OPA als PEP verschiedene Endpunkte zugriffsgeschützt werden.
 
-Als Beispiel für den Endpunkt wird mittels Caddy eine REST-API simuliert.
+Als Beispiel für den upstream Endpunkt wird traefik/whoami eingesetzt.
 
 ## Anforderungen für Proto
 
@@ -12,17 +12,15 @@ Zugriff lesend und schreibend für unterschiedliche Benutzer auf das User-API:
 * Writer: Hat schreibenden Zugriff auf die User-API
 * Other: Hat keinen Zugriff auf die User-API
 
-## Authz Vorschritte
 
-### Über Consumers und API-Key:
 
-    curl -i http://127.0.0.1:8088/api/users -H 'apikey: reader-key'
+## Prototyp ausführen
 
-### Über Consumers und Basic-Auth:
+## Docker starten
 
-    curl -i http://127.0.0.1:8088/api/users -u reader-key:reader-key
+In Verzeichnis docker/
 
-## Authz
+    docker compose up
 
 ### Signed token von Mock Authz Server beziehen
 
