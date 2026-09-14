@@ -1,0 +1,80 @@
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.diagnostics.TaskReportTask
+import org.gradle.api.tasks.options.Option
+
+/**
+ * Public task contract for a deployment lifecycle. The lifecycle coordinates
+ * internal actions and is the only task type that exposes command-line options.
+ */
+abstract class DeploymentLifecycleTask extends DefaultTask {
+    @Input
+    String deploymentVersion = 'current'
+
+    @Input
+    boolean dryRun = false
+
+    @Internal
+    String targetEnvironment
+
+    @Option(option = 'deployment-version', description = 'Version label to deploy (default: current).')
+    void setDeploymentVersion(String deploymentVersion) {
+        this.deploymentVersion = deploymentVersion
+    }
+
+    @Option(option = 'simulate', description = 'Simulate the deployment and report the selected values.')
+    void setDryRun(boolean dryRun) {
+        this.dryRun = dryRun
+    }
+
+    @TaskAction
+    void reportDeployment() {
+        def mode = dryRun ? 'DRY RUN: would deploy' : 'SIMULATION: deployed'
+        logger.lifecycle("${mode} version '${deploymentVersion}' to ${targetEnvironment}.")
+    }
+}
+
+def prepareDeployment = tasks.register('prepareDeployment') {
+    group = 'internal deployment'
+    description = 'Internal action: prepares the deployment input.'
+    doLast {
+        logger.lifecycle('Preparing the deployment input.')
+    }
+}
+
+def uploadDeployment = tasks.register('uploadDeployment') {
+    group = 'internal deployment'
+    description = 'Internal action: uploads the prepared deployment input.'
+    dependsOn prepareDeployment
+    doLast {
+        logger.lifecycle('Uploading the deployment input.')
+    }
+}
+
+def verifyDeployment = tasks.register('verifyDeployment') {
+    group = 'internal deployment'
+    description = 'Internal action: verifies the uploaded deployment input.'
+    dependsOn uploadDeployment
+    doLast {
+        logger.lifecycle('Verifying the deployment input.')
+    }
+}
+
+[
+    deployDevelopment: 'development',
+    deployStaging    : 'staging',
+    deployProduction : 'production'
+].each { taskName, environment ->
+    tasks.register(taskName, DeploymentLifecycleTask) {
+        group = 'deployment'
+        description = "Deploy to ${environment}; accepts --deployment-version and --simulate."
+        targetEnvironment = environment
+        dependsOn verifyDeployment
+    }
+}
+
+tasks.named('tasks', TaskReportTask) {
+    displayGroups = ['deployment']
+}

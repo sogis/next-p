@@ -43,7 +43,7 @@ im Umsetzungsprojekt "Tools für die Themenintegratoren".
     * Validiert die Konfiguration des Kellers (Da erst Keller vorhanden ist)
         * Json-Referenzen untereinander konsistent
         * Schemen liegen lokal vor
-* Berechtigungen über log (einfach Fälle) und oder über Tool "Berechtigungen zeigen" verifizieren.
+* Berechtigungen über log (einfache Fälle) und oder über Tool "Berechtigungen zeigen" verifizieren.
 * Schemen mittels Schemajobs auf Prod anlegen
 * Merge avt_baukoord_data_jek in main
 
