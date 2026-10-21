@@ -165,3 +165,12 @@ Mit dem folgenden Json wird ein Divider konfiguriert:
     "type":"divider"
 }
 ```
+
+## Fragen
+
+* Wie gestalten, damit keine Umformatierungen während copy/paste zwischen Templatedesign-Webanwendung und den Konfigurations-Jsons notwendig sind?
+* Die manuelle Nachführung von column_revs ist fehleranfällig. Gibt es in der Webanwendung Möglichkeiten, die im template referenzierten Spalten automatisch zu identifizieren?
+* Wie erfogt das Templatedesign bei Facadelayern?
+* Vertiefung bezüglich der notwendigen Kennung der entstehenden virtuellen Attribute:
+    * Wo genau sind diese zwingend?
+    * Kann dafür einfach die "Ausgabeposition" verwendet werden?
