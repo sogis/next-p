@@ -1,0 +1,5 @@
+[
+  {"id": "group_1", "groups_": ["group_2"], "roles_": []},
+  {"id": "group_2", "groups_": ["group_3"], "roles_": []},
+  {"id": "group_3", "groups_": [], "roles_": ["role_deep"]}
+]

@@ -1,0 +1,5 @@
+[
+  {"user_id": "alice", "role_id": "role_user"},
+  {"user_id": "alice", "role_id": "role_child"},
+  {"user_id": "alice", "role_id": "role_parent"}
+]

@@ -1,0 +1,4 @@
+[
+  {"id": "child", "groups_": ["parent"], "roles_": []},
+  {"id": "parent", "groups_": [], "roles_": ["role_parent"]}
+]

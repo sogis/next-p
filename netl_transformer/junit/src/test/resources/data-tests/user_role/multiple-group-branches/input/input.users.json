@@ -1,0 +1,4 @@
+[
+  {"id": "alice", "groups_": ["team_a", "team_b"], "roles_": []},
+  {"id": "bob", "groups_": ["team_b"], "roles_": []}
+]

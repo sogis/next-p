@@ -26,5 +26,6 @@ description = 'POC transformer runner for DuckDB.'
 // The helloWorld POC creates its own local input relation and does not read it.
 apply from: 'helloWorld/transformer.gradle'
 apply from: 'helloUniverse/transformer.gradle'
+apply from: 'user_role/transformer.gradle'
 
 defaultTasks 'helloUniverse'

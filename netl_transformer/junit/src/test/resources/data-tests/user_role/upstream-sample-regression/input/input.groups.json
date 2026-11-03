@@ -1,0 +1,4 @@
+[
+  {"id": "afu", "groups_": [], "roles_": ["afu_kbs_read"]},
+  {"id": "afu_boden", "groups_": ["afu"], "roles_": []}
+]

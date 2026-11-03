@@ -1,0 +1,5 @@
+[
+  {"id": "team_a", "groups_": ["parent"], "roles_": ["role_shared"]},
+  {"id": "team_b", "groups_": ["parent"], "roles_": ["role_shared"]},
+  {"id": "parent", "groups_": [], "roles_": ["role_shared"]}
+]

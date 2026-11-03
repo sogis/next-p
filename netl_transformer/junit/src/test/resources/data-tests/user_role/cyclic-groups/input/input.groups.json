@@ -1,0 +1,4 @@
+[
+  {"id": "group_a", "groups_": ["group_b"], "roles_": ["role_a"]},
+  {"id": "group_b", "groups_": ["group_a"], "roles_": ["role_b"]}
+]

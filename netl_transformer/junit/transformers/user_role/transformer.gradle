@@ -1,0 +1,17 @@
+// The host must apply transformer-host.gradle before this definition.
+def runtime = transformerRuntime
+def transformerDir = runtime.directory('user_role')
+
+def userRolePreparePrincipal = tasks.register('_userRolePreparePrincipal', runtime.sqlExecutor) {
+    description = 'Builds the local principal relation used by the user_role transformer.'
+    database = runtime.database()
+    sqlFiles = files(new File(transformerDir, 'prepare-principal.sql'))
+}
+
+tasks.register('user_role', runtime.sqlExecutor) {
+    group = 'transformers'
+    description = 'Generates the user-to-role mapping table from users and nested groups.'
+    dependsOn userRolePreparePrincipal
+    database = runtime.database()
+    sqlFiles = files(new File(transformerDir, 'result.sql'))
+}
