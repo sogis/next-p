@@ -1,0 +1,19 @@
+// The root build must put Gretl on its buildscript classpath and apply its
+// plugin before applying this script. Gradle does not expose a script plugin's
+// buildscript classpath to the root build.
+if (!plugins.hasPlugin('ch.so.agi.gretl')) {
+    throw new GradleException('Apply the ch.so.agi.gretl plugin before transformer-host.gradle.')
+}
+
+def duckdbFile = layout.buildDirectory.file('netl-transformer.duckdb').get().asFile
+duckdbFile.parentFile.mkdirs()
+ext.dbUri = providers.gradleProperty('duckdbUrl')
+    .getOrElse("jdbc:duckdb:${duckdbFile.absolutePath}")
+ext.dbUser = providers.gradleProperty('duckdbUser').getOrElse('')
+ext.dbPwd = providers.gradleProperty('duckdbPassword').getOrElse('')
+ext.inputDir = providers.gradleProperty('inputDir').getOrElse('input')
+ext.transformersDir = providers.gradleProperty('transformersDir')
+    .map { file(it) }
+    .getOrElse(projectDir)
+
+apply from: new File(transformersDir, 'transformer-runtime.gradle')

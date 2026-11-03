@@ -1,0 +1,10 @@
+// The host must apply transformer-host.gradle before this definition.
+def runtime = transformerRuntime
+def transformerDir = runtime.directory('helloUniverse')
+tasks.register('helloUniverse', runtime.sqlExecutor) {
+    group = 'transformers'
+    description = 'Runs the helloUniverse transformer.'
+    dependsOn 'helloWorld'
+    database = runtime.database()
+    sqlFiles = files(new File(transformerDir, 'result.sql'))
+}

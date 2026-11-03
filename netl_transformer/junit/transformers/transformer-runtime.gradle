@@ -1,0 +1,10 @@
+// Applied once by transformer-host.gradle. Transformer definitions consume this
+// contract but never apply it themselves.
+def sqlExecutor = project.plugins.getPlugin('ch.so.agi.gretl').class.classLoader
+    .loadClass('ch.so.agi.gretl.tasks.SqlExecutor')
+
+ext.transformerRuntime = [
+    sqlExecutor: sqlExecutor,
+    database   : { -> [dbUri, dbUser, dbPwd] },
+    directory  : { name -> new File(transformersDir, name) }
+]
